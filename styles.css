@@ -54,7 +54,7 @@ body {
   height: 6%;
   left: 47%;
   top: 47%;
-  background: url("images/sprite_left_1.png") center / contain no-repeat;
+  background: url("images/sprite_right_1.png") center / contain no-repeat;
   z-index: 3;
 }
 
