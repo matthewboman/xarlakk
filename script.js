@@ -2,44 +2,49 @@ const game   = document.getElementById("game")
 const player = document.createElement("div")
 player.id    = "player"
 
-const step   = 20
-const center = 142
+const step    = 10
+const centerX = 142
+const centerY = 150
 
 const links  = {
-  up:    { title: "Gallery",   url: "https://www.xarlakkheavyindustries.com/" },
-  down:  { title: "Store",     url: "https://www.xarlakkheavyindustries.com/xhi-mmxxv" },
-  left:  { title: "Customize", url: "https://www.xarlakkheavyindustries.com/contact" },
-  right: { title: "∞",         url: "https://www.youtube.com/watch?v=Aq5WXmQQooo&list=RDAq5WXmQQooo&start_radio=1" },
+  up:    { title: "", url: "https://www.xarlakkheavyindustries.com/" },
+  left:  { title: "", url: "https://www.xarlakkheavyindustries.com/xhi-mmxxv" },
+  right: { title: "", url: "https://www.xarlakkheavyindustries.com/contact" },
+  down:  { title: "", url: "https://www.xarlakkheavyindustries.com/iota" },
 }
 
 const bounds = {
-  up:    0,
-  down:  284,
-  left:  0,
-  right: 284,
+  up:    60,
+  down:  230,
+  left:  70,
+  right: 250,
 }
+
+let facing = "right"
+let frame  = 1
 
 function move(dir) {
   let x = player.offsetLeft
   let y = player.offsetTop
 
-  if (dir === "up"    && x === center && y > bounds.up)    y -= step
-  if (dir === "down"  && x === center && y < bounds.down)  y += step
-  if (dir === "left"  && y === center && x > bounds.left)  x -= step
-  if (dir === "right" && y === center && x < bounds.right) x += step
+  if (dir === "up"    && x === centerX && y > bounds.up)    y -= step
+  if (dir === "down"  && x === centerX && y < bounds.down)  y += step
+  if (dir === "left"  && y === centerY && x > bounds.left)  x -= step
+  if (dir === "right" && y === centerY && x < bounds.right) x += step
 
   player.style.left = x + "px"
   player.style.top  = y + "px"
 
+  updateSprite(dir)
   checkEnd(dir, x, y)
 }
 
 function checkEnd(dir, x, y) {
   if (
-    (dir === "up"    && (y - 2) <= bounds.up)   ||
-    (dir === "down"  && (y + 2) >= bounds.down) ||
-    (dir === "left"  && (x - 2) <= bounds.left) ||
-    (dir === "right" && (x + 2) >= bounds.right)
+    (dir === "up"    && y <= bounds.up)   ||
+    (dir === "down"  && y >= bounds.down) ||
+    (dir === "left"  && x <= bounds.left) ||
+    (dir === "right" && x >= bounds.right)
   ) {
     window.open(links[dir].url, "_blank")
     reset()
@@ -47,8 +52,18 @@ function checkEnd(dir, x, y) {
 }
 
 function reset() {
-  player.style.left = center + "px"
-  player.style.top  = center + "px"
+  player.style.left = centerX + "px"
+  player.style.top  = centerY + "px"
+}
+
+function updateSprite(dir) {
+  if (dir === "left")  facing = "left"
+  if (dir === "right") facing = "right"
+
+  frame = frame === 1 ? 2 : 1
+
+  player.style.backgroundImage =
+    `url("images/sprite_${facing}_${frame}.png")`
 }
 
 document.addEventListener("keydown", (e) => {
@@ -67,17 +82,6 @@ document.addEventListener("keydown", (e) => {
 document.querySelectorAll("#controls button").forEach((btn) => {
   btn.addEventListener("click", () => move(btn.dataset.dir))
 })
-
-const vPath     = document.createElement("div")
-vPath.id        = "path-vertical"
-vPath.className = "path"
-
-const hPath     = document.createElement("div")
-hPath.id        = "path-horizontal"
-hPath.className = "path"
-
-game.appendChild(vPath)
-game.appendChild(hPath)
 
 Object.entries(links).forEach(([dir, data]) => {
   const label = document.createElement("div")
