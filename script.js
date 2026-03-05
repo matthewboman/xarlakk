@@ -7,10 +7,10 @@ const centerX = 142
 const centerY = 150
 
 const links  = {
-  up:    { title: "", url: "https://www.xarlakkheavyindustries.com/" },
-  left:  { title: "", url: "https://www.xarlakkheavyindustries.com/xhi-mmxxv" },
-  right: { title: "", url: "https://www.xarlakkheavyindustries.com/contact" },
-  down:  { title: "", url: "https://www.xarlakkheavyindustries.com/iota" },
+  up:    { title: "ARCHIVE", url: "https://www.xarlakkheavyindustries.com/archive" },
+  left:  { title: "SHOPPE",  url: "https://www.xarlakkheavyindustries.com/shoppe" },
+  right: { title: "CUSTOM",  url: "https://www.xarlakkheavyindustries.com/custom" },
+  down:  { title: "SECRET",  url: "https://www.xarlakkheavyindustries.com/iota" },
 }
 
 const bounds = {
