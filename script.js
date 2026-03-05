@@ -4,7 +4,7 @@ player.id    = "player"
 
 const step    = 10
 const centerX = 142
-const centerY = 152
+const centerY = 148
 
 const links  = {
   up:    { title: "", url: "https://www.xarlakkheavyindustries.com/archive" },
