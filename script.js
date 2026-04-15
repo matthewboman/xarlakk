@@ -2,49 +2,73 @@ const game   = document.getElementById("game")
 const player = document.createElement("div")
 player.id    = "player"
 
-const step    = 10
-const centerX = 142
-const centerY = 148
+const step   = 3
+const pos    = {
+  x: 50,
+  y: 53,
+}
+const center = {
+  x: 50,
+  y: 53,
+}
+const bounds = {
+  up:    20,
+  down:  80,
+  left:  20,
+  right: 80,
+}
 
 const links  = {
   up:    { title: "", url: "https://www.xarlakkheavyindustries.com/archive" },
-  left:  { title: "",  url: "https://www.xarlakkheavyindustries.com/shoppe" },
-  right: { title: "",  url: "https://www.xarlakkheavyindustries.com/custom" },
-  down:  { title: "",  url: "https://www.xarlakkheavyindustries.com/iota" },
-}
-
-const bounds = {
-  up:    60,
-  down:  230,
-  left:  70,
-  right: 250,
+  left:  { title: "", url: "https://www.xarlakkheavyindustries.com/shoppe" },
+  right: { title: "", url: "https://www.xarlakkheavyindustries.com/custom" },
+  down:  { title: "", url: "https://www.xarlakkheavyindustries.com/iota" },
 }
 
 let facing = "right"
 let frame  = 1
 
-function move(dir) {
-  let x = player.offsetLeft
-  let y = player.offsetTop
-
-  if (dir === "up"    && x === centerX && y > bounds.up)    y -= step
-  if (dir === "down"  && x === centerX && y < bounds.down)  y += step
-  if (dir === "left"  && y === centerY && x > bounds.left)  x -= step
-  if (dir === "right" && y === centerY && x < bounds.right) x += step
-
-  player.style.left = x + "px"
-  player.style.top  = y + "px"
-
-  updateSprite(dir)
-  checkEnd(dir, x, y)
+function renderPlayer() {
+  player.style.left = `${pos.x}%`
+  player.style.top  = `${pos.y}%`
 }
 
-function checkEnd(dir, x, y) {
+function move(dir) {
+  if (dir === "up" && nearlyEqual(pos.x, center.x) && pos.y > bounds.up) {
+    pos.x = center.x
+    pos.y -= step
+  }
+
+  if (dir === "down" && nearlyEqual(pos.x, center.x) && pos.y < bounds.down) {
+    pos.x = center.x
+    pos.y += step
+  }
+
+  if (dir === "left" && nearlyEqual(pos.y, center.y) && pos.x > bounds.left) {
+    pos.y = center.y
+    pos.x -= step
+  }
+
+  if (dir === "right" && nearlyEqual(pos.y, center.y) && pos.x < bounds.right) {
+    pos.y = center.y
+    pos.x += step
+  }
+
+  renderPlayer()
+  updateSprite(dir)
+  checkEnd(dir)
+}
+
+function nearlyEqual(a, b, epsilon = 0.5) {
+  return Math.abs(a - b) < epsilon
+}
+
+function checkEnd(dir) {
   if (
-    (dir === "up"    && y <= bounds.up)   ||
-    (dir === "down"  && y >= bounds.down) ||
-    (dir === "left"  && x <= bounds.left) ||
-    (dir === "right" && x >= bounds.right)
+    (dir === "up"    && pos.y <= bounds.up)   ||
+    (dir === "down"  && pos.y >= bounds.down) ||
+    (dir === "left"  && pos.x <= bounds.left) ||
+    (dir === "right" && pos.x >= bounds.right)
   ) {
     window.open(links[dir].url, "_blank")
     reset()
@@ -52,8 +76,9 @@ function checkEnd(dir, x, y) {
 }
 
 function reset() {
-  player.style.left = centerX + "px"
-  player.style.top  = centerY + "px"
+  pos.x = center.x
+  pos.y = center.y
+  renderPlayer()
 }
 
 function updateSprite(dir) {
@@ -62,11 +87,15 @@ function updateSprite(dir) {
 
   frame = frame === 1 ? 2 : 1
 
-  player.style.backgroundImage =
-    `url("images/sprite_${facing}_${frame}.png")`
+  player.style.backgroundImage = `url("images/sprite_${facing}_${frame}.png")`
 }
 
-document.addEventListener("keydown", (e) => {
+game.tabIndex = 0
+
+game.addEventListener("click", () => game.focus())
+game.addEventListener("touchstart", () => game.focus(), { passive: true })
+
+game.addEventListener("keydown", (e) => {
   const map = {
     ArrowUp:    "up",
     ArrowDown:  "down",
@@ -74,9 +103,12 @@ document.addEventListener("keydown", (e) => {
     ArrowRight: "right",
   }
 
-  if (map[e.key]) {
-    move(map[e.key])
-  }
+  const dir = map[e.key]
+  
+  if (!dir) return
+
+  e.preventDefault()
+  move(dir)
 })
 
 document.querySelectorAll("#controls button").forEach((btn) => {
@@ -94,3 +126,7 @@ Object.entries(links).forEach(([dir, data]) => {
 
 game.appendChild(player)
 reset()
+
+window.addEventListener("load", () => {
+  game.focus()
+})
