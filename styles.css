@@ -22,7 +22,7 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("./images/map.png") center / cover no-repeat;
+  background: url("./images/nu_map.png") center / cover no-repeat;
   z-index: 1;
   pointer-events: none;
 }
